@@ -18,6 +18,7 @@ def find_key(dict, key_word):
             return key
 
 def find_data_2pt(hadron):
+    #* 2pt file name 
     fname = 'spec_4D_a12m130_a_tslice_avg_cfgs_300-5295_srcs_0-31_fft_n6.h5'
 
     basekey = 'gf1p0_w3p0_n30_M51p2_L520_a3p0/spec_4D/ml0p00195'
@@ -30,6 +31,7 @@ def find_data_2pt(hadron):
 
 
 def find_data_3pt(flavor, current, tsep):
+    #* 3pt file name 
     file_name = 'formfac_4D_a12m130_a_proton_{}_{}_cfgs_300-5295_srcs_0-31_fft_n6.h5'
 
     basekey = 'gf1p0_w3p0_n30_M51p2_L520_a3p0/formfac_4D/ml0p00195' 
