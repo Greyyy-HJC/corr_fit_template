@@ -82,20 +82,16 @@ class Fit():
         return val
 
     def fit_func(self, mom_ls):
-        #!# 0 is not in mom_ls
         def fcn(x, p):
             val = {}
             
             if self.include_2pt == True:
                 #* mom = 0
-                pt2_t = x['pt2_0']
-                val['pt2_0'] = self.pt2_fit_func(pt2_t, p, 0)
+                pt2_t = x['proton']
+                val['proton'] = self.pt2_fit_func(pt2_t, p, 0)
 
                 for mom in mom_ls:
-                    mo = '_'+str(mom)
-
-                    pt2_t = x['pt2'+mo]
-                    val['pt2'+mo] = self.pt2_fit_func(pt2_t, p, mom)
+                    pass
 
             if self.include_3pt == True:
                 #* mom = 0
@@ -127,6 +123,7 @@ class Fit():
             return val
         return fcn
 
+
     def fit(self, data_dic, pt2_t, pt3_A3, pt3_V4, mom_ls, best_p0=None, corr=False, priors=None, save=False):
         if priors == None:
             priors = self.prior
@@ -135,93 +132,19 @@ class Fit():
         Amp = {}
 
         if self.include_2pt == True:
-            pt2_amp = []
-            for t in pt2_t['p_sq_0_pz_0']:
-                pt2_amp.append(data_dic['p_sq_0_pz_0']['2pt'][t])
+            t_tsep_tau['proton'] = pt2_t['proton']
 
-            t_tsep_tau['pt2_0'] = pt2_t['p_sq_0_pz_0']
-            Amp['pt2_0'] = np.array(pt2_amp)
+            pt2_amp = []
+            for t in pt2_t['proton']:
+                pt2_amp.append(data_dic['proton'][t])
+
+            Amp['proton'] = np.array(pt2_amp)
 
             #* mom != 0
-            for mom in mom_ls:
-                mo = '_'+str(mom)
-                hash_key = 'p_sq_{}_pz_0'.format(mom)
 
-                pt2_amp = []
-                for t in pt2_t[hash_key]:
-                    pt2_amp.append(data_dic[hash_key]['2pt'][t])
-
-                t_tsep_tau['pt2'+mo] = pt2_t[hash_key]
-                Amp['pt2'+mo] = np.array(pt2_amp)
 
         if self.include_3pt == True:
-            #!# A3
-            #* mom = 0
-            pt3_t_A3 = pt3_A3['p_sq_0_pz_0'][0] 
-            pt3_tau_A3 = pt3_A3['p_sq_0_pz_0'][1]
-
-            pt3_amp_A3 = []
-            for i in range(len(pt3_t_A3)):
-                t = pt3_t_A3[i]
-                tau = pt3_tau_A3[i]
-
-                pt3_amp_A3.append( data_dic['p_sq_0_pz_0']['A3_tsep_'+str(t)][tau] )
-
-            t_tsep_tau['pt3_A3_0'] = [np.array(pt3_t_A3), np.array(pt3_tau_A3)]
-            Amp['pt3_A3_0'] = np.array(pt3_amp_A3)
-
-            #* mom != 0
-            for mom in mom_ls:
-                mo = '_'+str(mom)
-                hash_key = 'p_sq_{}_pz_0'.format(mom)
-
-                pt3_t_A3 = pt3_A3[hash_key][0] 
-                pt3_tau_A3 = pt3_A3[hash_key][1]
-
-                pt3_amp_A3 = []
-                for i in range(len(pt3_t_A3)):
-                    t = pt3_t_A3[i]
-                    tau = pt3_tau_A3[i]
-
-                    pt3_amp_A3.append( data_dic[hash_key]['A3_tsep_'+str(t)][tau] )
-
-                t_tsep_tau['pt3_A3'+mo] = [np.array(pt3_t_A3), np.array(pt3_tau_A3)]
-                Amp['pt3_A3'+mo] = np.array(pt3_amp_A3)
-
-
-            #!# V4
-            #* mom = 0
-            pt3_t_V4 = pt3_V4['p_sq_0_pz_0'][0] 
-            pt3_tau_V4 = pt3_V4['p_sq_0_pz_0'][1]
-
-            pt3_amp_V4 = []
-            for i in range(len(pt3_t_V4)):
-                t = pt3_t_V4[i]
-                tau = pt3_tau_V4[i]
-
-                pt3_amp_V4.append( data_dic['p_sq_0_pz_0']['V4_tsep_'+str(t)][tau] )
-
-            t_tsep_tau['pt3_V4_0'] = [np.array(pt3_t_V4), np.array(pt3_tau_V4)]
-            Amp['pt3_V4_0'] = np.array(pt3_amp_V4)
-
-            #* mom != 0
-            for mom in mom_ls:
-                mo = '_'+str(mom)
-                hash_key = 'p_sq_{}_pz_0'.format(mom)
-
-                pt3_t_V4 = pt3_V4[hash_key][0] 
-                pt3_tau_V4 = pt3_V4[hash_key][1]
-
-                pt3_amp_V4 = []
-                for i in range(len(pt3_t_V4)):
-                    t = pt3_t_V4[i]
-                    tau = pt3_tau_V4[i]
-
-                    pt3_amp_V4.append( data_dic[hash_key]['V4_tsep_'+str(t)][tau] )
-
-                t_tsep_tau['pt3_V4'+mo] = [np.array(pt3_t_V4), np.array(pt3_tau_V4)]
-                Amp['pt3_V4'+mo] = np.array(pt3_amp_V4)
-
+            pass
 
         if best_p0 == None:
             fit_result = lsf.nonlinear_fit(data=(t_tsep_tau, Amp), prior=priors, fcn=self.fit_func(mom_ls), maxit=10000, fitter='scipy_least_squares') # scipy_least_squares   # gsl_multifit

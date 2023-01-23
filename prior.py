@@ -1,9 +1,9 @@
 import numpy as np 
 import gvar as gv 
 
-mom_list = [1, 2, 4, 5, 8, 9, 10, 13, 16, 17, 18, 20, 25, 32] # no zero-mom
+mom_list = [1] # no zero-mom
 
-def prior_ho_a12m130(pt2_n, pt3_n):
+def prior_ho_a09m310(pt2_n, pt3_n):
     prior = gv.BufferDict()
 
     #!# zero mom

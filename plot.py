@@ -24,7 +24,7 @@ meff_label = r'$m_{eff}$'
 gev_fm = 0.1973269631 # 1 = 0.197 GeV . fm
 
 
-def meff_plot(pt2_ls, ti, tf, fit_res, mom_ls, mom_plot, title, pp_np):
+def meff_plot(pt2_ls, ti, tf, fit_res, mom_ls, mom_plot, title):
     meff_ls = pt2_to_meff(pt2_ls)
 
     fig = plt.figure(figsize=fig_size)
@@ -36,26 +36,14 @@ def meff_plot(pt2_ls, ti, tf, fit_res, mom_ls, mom_plot, title, pp_np):
     t2_fit = np.linspace(ti+1, tf, 100)
 
     x = {}
-    x['pt2_0_pp'] = t1_fit
-    x['pt2_0_np'] = t1_fit
+    x['proton'] = t1_fit
 
-    for mom in mom_ls:
-        mo = '_'+str(mom)
-        x['pt2'+mo+'_pp'] = t1_fit
-        x['pt2'+mo+'_np'] = t1_fit
-
-    c1_fit = fit_res.fcn( x, fit_res.p )['pt2_{}_{}'.format(mom_plot, pp_np)]
+    c1_fit = fit_res.fcn( x, fit_res.p )['proton']
 
     x = {}
-    x['pt2_0_pp'] = t2_fit
-    x['pt2_0_np'] = t2_fit
+    x['proton'] = t2_fit
 
-    for mom in mom_ls:
-        mo = '_'+str(mom)
-        x['pt2'+mo+'_pp'] = t2_fit
-        x['pt2'+mo+'_np'] = t2_fit
-
-    c2_fit = fit_res.fcn( x, fit_res.p )['pt2_{}_{}'.format(mom_plot, pp_np)]
+    c2_fit = fit_res.fcn( x, fit_res.p )['proton']
 
     meff_fit = []
     for i in range(100):
@@ -64,11 +52,11 @@ def meff_plot(pt2_ls, ti, tf, fit_res, mom_ls, mom_plot, title, pp_np):
 
     ax.fill_between( t1_fit, [v.mean + v.sdev for v in meff_fit], [v.mean - v.sdev for v in meff_fit], color=blue, alpha=0.4, label='fit' )
 
-    # ax.set_ylim([0, 5])
+    ax.set_ylim([0, 1])
     # ax.set_xlim([-0.5, 1.5])
     ax.set_xlabel(t_label, **fs_p)
     ax.set_ylabel(meff_label, **fs_p)
-    ax.set_title(title)
+    ax.set_title(title, font)
     ax.legend(loc='upper right')
     ax.tick_params(direction='in', **ls_p)
     ax.grid(linestyle=':')
@@ -98,7 +86,7 @@ def fit_on_data_R(data_set_tidy, mom, current, title, ylim=None):
     ax.tick_params(direction='in', **ls_p)
     ax.grid(linestyle=':')
     ax.set_ylim(ylim)
-    plt.title(title, fs_p)
+    plt.title(title, font)
     plt.legend()
     plt.show()
 
