@@ -57,3 +57,44 @@ def prior_ho_a09m310(pt2_n, pt3_n):
 
 
     return prior
+
+
+def prior_gmo(pt2_n):
+    #* hadron: 'lambda_z', 'sigma_p', 'proton', 'xi_z'
+    #* sign: L, S, P, X
+    #* '{L}_z{0}_{s}': {L, S, P, X}, {0, 1, 2 ...}, {s, p}
+    #* The above are hadron, n-state, p is for the different sink
+
+    prior = gv.BufferDict()
+
+    for had in ['L', 'S', 'P', 'X']:
+        #* overlap
+        for src in ['s', 'p']:
+            prior['{}_z0_{}'.format(had, src)] = gv.gvar(7.5e-4, 1e-2)
+            for i in range(1,pt2_n):
+                prior['{}_z{}_{}'.format(had, i, src)] = gv.gvar(7.5e-4, 1e-2)
+
+    #* energy tower
+    prior['L_E0'] = gv.gvar(0.8, 0.5)
+    for i in range(1,pt2_n):
+        prior['log(L_dE{})'.format(i)] = gv.gvar(-1, 0.3)
+    prior['log(L_dEmax)'] = gv.gvar(-0.5, 0.7)
+
+    prior['S_E0'] = gv.gvar(0.8, 0.5)
+    for i in range(1,pt2_n):
+        prior['log(S_dE{})'.format(i)] = gv.gvar(-1, 0.3)
+    prior['log(S_dEmax)'] = gv.gvar(-0.5, 0.7)
+
+    prior['P_E0'] = gv.gvar(0.8, 0.5)
+    for i in range(1,pt2_n):
+        prior['log(P_dE{})'.format(i)] = gv.gvar(-1, 0.3)
+    prior['log(P_dEmax)'] = gv.gvar(-0.5, 0.7)
+
+    prior['X_E0'] = gv.gvar(0.8, 0.5)
+    for i in range(1,pt2_n):
+        prior['log(X_dE{})'.format(i)] = gv.gvar(-1, 0.3)
+    prior['log(X_dEmax)'] = gv.gvar(-0.5, 0.7)
+
+    prior['dGMO'] = gv.gvar(1, 0.5)
+
+    return prior

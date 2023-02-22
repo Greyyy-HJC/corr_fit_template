@@ -201,6 +201,44 @@ def pt2_to_meff(pt2_ls):
         meff_ls.append(val)
     return meff_ls
 
+def fit_on_data_plot(x, gv_y, fit_res, key, title, log_folder, ylim=None, save=True):
+    #* this is a general plot function to make effective mass plot with fit band on the data
+
+    #* data part
+    mx = x[:-1]
+    gv_my = pt2_to_meff(gv_y)
+    my = [v.mean for v in gv_my]
+    myerr = [v.sdev for v in gv_my]
+
+    #* fit part
+    fit_x = np.linspace(mx[0], mx[-1], 100)
+    input_x = {}
+    input_x[key] = fit_x
+    fit_y = fit_res.fcn(input_x, fit_res.p)[key]
+    fit_mx = []
+    fit_my = []
+    fit_myerr = []
+
+    for i in range(len(fit_x)-1):
+        val = np.log(fit_y[i]) - np.log(fit_y[i+1])
+        val = val / (fit_x[i+1] - fit_x[i])
+        fit_mx.append(fit_x[i])
+        fit_my.append(val.mean)
+        fit_myerr.append(val.sdev)
+
+
+    fig = plt.figure(figsize=fig_size)
+    ax = plt.axes(plt_axes)
+    ax.errorbar(mx, my, myerr, label='data', **errorb)
+    ax.fill_between(fit_mx, [fit_my[i]+fit_myerr[i] for i in range(len(fit_my))], [fit_my[i]-fit_myerr[i] for i in range(len(fit_my))], alpha=0.4, label='fit')
+    ax.tick_params(direction='in', top='on', right='on', **ls_p)
+    ax.grid(linestyle=':')
+    ax.set_ylim(ylim)
+    plt.title(title, font)
+    plt.legend()
+    if save == True:
+        plt.savefig(log_folder+title+'.pdf', transparent=True)
+    # plt.show()
 
 def pt2_pt3_to_R(tsep, tau_ls, pt2_0_ls, pt2_mom_ls, pt3_ls):
     #!# here pt2 list should be completed one started from tsep=0

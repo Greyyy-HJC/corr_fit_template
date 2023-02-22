@@ -19,7 +19,11 @@ def data_check_meff(data_set_tidy, hadron):
     t_ls = np.arange(len(pt2_ls))
     meff_ls = pt2_to_meff(pt2_ls)
 
-    errorbar_plot(t_ls[:-1], [v.mean for v in meff_ls], [v.sdev for v in meff_ls], '{}_meff'.format(hadron), ylim=[0, 1.5], save=False)
+    x_ls = [t_ls[:-1]]
+    y_ls = [[v.mean for v in meff_ls]]
+    yerr_ls = [[v.sdev for v in meff_ls]]
+
+    errorbar_plot(x_ls, y_ls, yerr_ls, '{}_meff'.format(hadron), ylim=[0, 1.5], save=False)
     plt.show()
 
     meff = np.mean(meff_ls[6:12])
@@ -30,7 +34,7 @@ def data_check_meff(data_set_tidy, hadron):
 
     return meff
 
-data_check_meff(data_set_tidy, hadron='proton')
+# data_check_meff(data_set_tidy, hadron='proton')
 
 
 #!# check ratio plot
@@ -43,6 +47,8 @@ data_check_meff(data_set_tidy, hadron='proton')
 
 #!# fit 
 def do_fit(mom_ls, pt2_n, pt3_n):
+    log_folder = 'fit_log/{}/'.format(ens)
+
     a09m310_fit = Fit(prior_ho_a09m310, pt2_n, pt3_n, include_2pt=True, include_3pt=False)
 
     #* 2pt variable t
@@ -81,15 +87,12 @@ def do_fit(mom_ls, pt2_n, pt3_n):
     fit_res, corr = a09m310_fit.fit(data_set_tidy, pt2_t, pt3_A3, pt3_V4, mom_ls, best_p0=None, corr=False)
     post = fit_res.p
 
-    print(fit_res.format(100))
+    #!# record fit results into a txt log file
+    log = open(log_folder+"{}.txt".format('proton'), mode="w", encoding="utf-8")
+    print(fit_res.format(100), file=log)
+    log.close()
 
     print('Q = {}'.format(fit_res.Q))
-
-    print('A3 of mom 0')
-    for i in range(pt3_n):
-        print([post['A3_{}{}_0'.format(*[j,i])] for j in range(i+1)])
-
-    print('\n')
 
     return fit_res
 
